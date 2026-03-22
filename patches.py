@@ -332,10 +332,12 @@ def get_binary_string_patches(name: str) -> list[tuple[str, str, str]]:
     return [
         ("667269646100", "6c6962676300",
          'residual "frida\\0" -> "libgc\\0"'),
-        # "Frida\0" -> "Xbndl\0" (NOT "Proxy" — Proxy is a JS builtin constructor
-        # used by Java bridge: new Proxy(target, handler). Overwriting it breaks Java.use())
-        ("467269646100", "58626e646c00",
-         'residual "Frida\\0" -> "Xbndl\\0"'),
+        # NOTE: "Frida\0" (capital F) is NOT patched here.
+        # The JS runtime defines `Frida` as a global API object (Frida.version, etc.)
+        # embedded in the compiled binary. Replacing "Frida\0" corrupts the JS engine
+        # and causes: ReferenceError: Frida is not defined (core.js:134)
+        # See: https://github.com/TheQmaks/phantom-frida/issues/1
+        #
         # "FRIDA\0" -> "XBNDL\0"
         ("465249444100", "58424e444c00",
          'residual "FRIDA\\0" -> "XBNDL\\0"'),

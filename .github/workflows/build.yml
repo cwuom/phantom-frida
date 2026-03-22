@@ -143,13 +143,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.custom_name }}-server-${{ inputs.frida_version }}
-          path: output/*.gz
+          path: output/${{ inputs.custom_name }}-server-*.gz
           retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload gadget artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.custom_name }}-gadget-${{ inputs.frida_version }}
+          path: output/${{ inputs.custom_name }}-gadget-*.gz
+          retention-days: 30
+          if-no-files-found: ignore
 
       - name: Upload uncompressed binaries
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.custom_name }}-server-${{ inputs.frida_version }}-uncompressed
+          name: ${{ inputs.custom_name }}-${{ inputs.frida_version }}-uncompressed
           path: |
             output/*
             !output/*.gz
